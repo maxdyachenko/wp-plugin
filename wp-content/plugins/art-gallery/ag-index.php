@@ -5,16 +5,29 @@ Description:  Plugin to create your own images galleries and paste it to the pag
 Author:       Max Dyachenko
 */
 
+//config
+define( 'PLUGIN_DIR', plugin_dir_path( __FILE__ ));
+define( 'PLUGIN_BASE_URL', admin_url('admin.php?page=ag-page'));
+
 
 register_activation_hook( __FILE__, 'ag_init' );
 function ag_init() {
     //include all hooks and filters
     global $wpdb;
-    $table_name = $wpdb->prefix . 'art-gallery';
+    $table_name = $wpdb->prefix . 'gallery_list';
     $sql = "CREATE TABLE `$table_name` (
-      `id` int(11) NOT NULL,
+      `id` int(11) NOT NULL AUTO_INCREMENT,
       `gallery_name` varchar(255) NOT NULL,
-      `img_name` varchar(255) NOT NULL
+      `gallery_img` varchar(255) NOT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+    $wpdb->query($sql);
+    $table_name2 = $wpdb->prefix . 'img_list';
+    $sql = "CREATE TABLE `$table_name2` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `gallery_name` varchar(255) NOT NULL,
+      `img_name` varchar(255) NOT NULL,
+      PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
     $wpdb->query($sql);
 }
@@ -43,10 +56,10 @@ function ag_register_my_custom_menu_page(){
 add_action( 'admin_menu', 'ag_register_my_custom_menu_page' );
 
 function ag_gallery_list(){
-    include(plugin_dir_path( __FILE__ ) . 'views/gallery-list.php');
+    include(PLUGIN_DIR . 'views/gallery-list.php');
 }
 function ag_create_gallery() {
-    include(plugin_dir_path( __FILE__ ) . 'views/create-gallery.php');
+    include(PLUGIN_DIR . 'views/create-gallery.php');
 }
 
 
@@ -84,5 +97,29 @@ function ag_include_scripts($hook) {
         wp_register_script( 'ag_create_gallery',  plugins_url('/assets/scripts/gallery-page-create.js',__FILE__ ));
         wp_enqueue_script('ag_create_gallery');
     }
+}
 
+add_action('admin_post_ag_save_gallery', 'ag_save_gallery');
+function ag_save_gallery() {
+    global $wpdb;
+    if (!current_user_can('edit_theme_options')) {
+        wp_die("Access denied");
+    }
+
+    check_admin_referer('ag_verify_gallery', 'ag_input_nonce');
+
+    //TODO sanitize data here  sanitize_text_field, absint
+    $table_name = $wpdb->prefix . 'gallery_list';
+    $wpdb->insert(
+        $table_name,
+        array(
+            'gallery_name' => $_POST['ag_name'],
+            'gallery_img' => "12"
+        ),
+        array(
+            '%s',
+            '%s'
+        )
+    );
+    wp_redirect(PLUGIN_BASE_URL);
 }
