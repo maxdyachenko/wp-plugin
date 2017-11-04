@@ -9,21 +9,24 @@ Author:       Max Dyachenko
 define( 'PLUGIN_DIR', plugin_dir_path( __FILE__ ));
 define( 'PLUGIN_BASE_URL', admin_url('admin.php?page=ag-page'));
 
+define( 'GALLERY_LIST_TABLE', $wpdb->prefix . "gallery_list");
+define( 'IMG_TABLE', $wpdb->prefix . "img_list");
+
 
 register_activation_hook( __FILE__, 'ag_init' );
 function ag_init() {
     //include all hooks and filters
     global $wpdb;
-    $table_name = $wpdb->prefix . 'gallery_list';
-    $sql = "CREATE TABLE `$table_name` (
+    $table = GALLERY_LIST_TABLE;
+    $sql = "CREATE TABLE `$table` (
       `id` int(11) NOT NULL AUTO_INCREMENT,
       `gallery_name` varchar(255) NOT NULL,
       `gallery_img` varchar(255) NOT NULL,
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
     $wpdb->query($sql);
-    $table_name2 = $wpdb->prefix . 'img_list';
-    $sql = "CREATE TABLE `$table_name2` (
+    $table2 = IMG_TABLE;
+    $sql = "CREATE TABLE `$table2` (
       `id` int(11) NOT NULL AUTO_INCREMENT,
       `gallery_name` varchar(255) NOT NULL,
       `img_name` varchar(255) NOT NULL,
@@ -56,6 +59,9 @@ function ag_register_my_custom_menu_page(){
 add_action( 'admin_menu', 'ag_register_my_custom_menu_page' );
 
 function ag_gallery_list(){
+    global $wpdb;
+    $table = GALLERY_LIST_TABLE;
+    $gallerylist_data = $wpdb->get_results( "SELECT gallery_name, gallery_img FROM $table" );
     include(PLUGIN_DIR . 'views/gallery-list.php');
 }
 function ag_create_gallery() {
