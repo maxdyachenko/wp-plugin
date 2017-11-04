@@ -12,6 +12,8 @@ define( 'PLUGIN_BASE_URL', admin_url('admin.php?page=ag-page'));
 define( 'GALLERY_LIST_TABLE', $wpdb->prefix . "gallery_list");
 define( 'IMG_TABLE', $wpdb->prefix . "img_list");
 
+define( 'GALLERY_NUMBER_ALLOWED', 5);
+
 
 register_activation_hook( __FILE__, 'ag_init' );
 function ag_init() {
@@ -55,7 +57,22 @@ function ag_register_my_custom_menu_page(){
         'ag-create-gallery',
         'ag_create_gallery'
 	);
+    add_submenu_page(
+        'ag-page',  //or null to create page that is not tied to anything
+        'Gallery',
+        'Gallery',
+        'administrator',
+        'ag-gallery',
+        'ag_gallery'
+    );
 }
+
+//hach to highlight parent menu when page is not menu item
+function my_admin_head() {
+
+    remove_submenu_page( 'ag-page', 'ag-gallery' );
+}
+add_action( 'admin_head', 'my_admin_head' );
 add_action( 'admin_menu', 'ag_register_my_custom_menu_page' );
 
 function ag_gallery_list(){
@@ -65,8 +82,20 @@ function ag_gallery_list(){
     include(PLUGIN_DIR . 'views/gallery-list.php');
 }
 function ag_create_gallery() {
+    $limit = checkGalleryLimit();
     include(PLUGIN_DIR . 'views/create-gallery.php');
 }
+function ag_gallery() {
+    //
+}
+//this function should be global
+function checkGalleryLimit() {
+    global $wpdb;
+    $table = GALLERY_LIST_TABLE;
+    $gallery_count =  $wpdb->get_var( "SELECT COUNT(*) FROM $table");
+    return $gallery_count == 5;
+}
+
 
 
 //enqueu styles
@@ -91,6 +120,7 @@ function ag_include_scripts($hook) {
         wp_register_script('ag_bootstrap_js', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js', array('ag_jquery'));
         wp_enqueue_script('ag_bootstrap_js');
 
+        wp_enqueue_media();
     }
     else {
         return;
@@ -115,12 +145,18 @@ function ag_save_gallery() {
     check_admin_referer('ag_verify_gallery', 'ag_input_nonce');
 
     //TODO sanitize data here  sanitize_text_field, absint
-    $table_name = $wpdb->prefix . 'gallery_list';
+    $table = GALLERY_LIST_TABLE;
+
+    if (checkGalleryLimit() || galleryExist($_POST['ag_name'])) {
+        wp_redirect(PLUGIN_BASE_URL);
+        return;
+    }
+
     $wpdb->insert(
-        $table_name,
+        $table,
         array(
             'gallery_name' => $_POST['ag_name'],
-            'gallery_img' => "12"
+            'gallery_img' => $_POST['ag_file']
         ),
         array(
             '%s',
@@ -128,4 +164,24 @@ function ag_save_gallery() {
         )
     );
     wp_redirect(PLUGIN_BASE_URL);
+}
+function galleryExist($name) {
+    global $wpdb;
+    $table = GALLERY_LIST_TABLE;
+    return $wpdb->get_row( "SELECT id FROM $table WHERE gallery_name = $name" );
+}
+
+add_action('admin_post_ag_delete_gallery', 'ag_delete_gallery');
+function ag_delete_gallery(){
+    global $wpdb;
+    if (!current_user_can('edit_theme_options')) {
+        wp_die("Access denied");
+    }
+
+    check_admin_referer('ag_verify_del_gallery', 'ag_input_nonce');
+
+    $table = GALLERY_LIST_TABLE;
+    $wpdb->delete( $table, array( 'gallery_name' => $_POST['name'] ), array( '%s' ) );
+    wp_redirect(PLUGIN_BASE_URL);
+
 }

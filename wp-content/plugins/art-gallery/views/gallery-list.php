@@ -7,8 +7,8 @@
                     <div class="card-block">
                         <h4 class="card-title"><?php echo $item->gallery_name; ?></h4>
                         <div class="buttons-group">
-                            <a href="/gallery/" class="btn btn-primary">Open Gallery</a>
-                            <button type="button" class="btn btn-danger delete-all" data-toggle="modal" data-target="#delete-image-popup" data-name="">Delete Gallery</button>
+                            <a href="<?php  echo admin_url() . 'admin.php?page=ag-gallery' ?>" class="btn btn-primary">Open Gallery</a>
+                            <button type="button" class="btn btn-danger delete-all" data-toggle="modal" data-target="#delete-image-popup" data-name="<?php echo $item->gallery_name; ?>">Delete Gallery</button>
                         </div>
                     </div>
                 </div>
@@ -22,8 +22,10 @@
                     <p>Are you sure?</p>
                 </div>
                 <div class="modal-footer">
-                    <form method="post" action="/delete-gallery">
-                        <input type="hidden" name="name">
+                    <form method="post" action="admin-post.php" class="del-gallery-form">
+                        <input type="hidden" name="action" value="ag_delete_gallery">
+                        <?php wp_nonce_field('ag_verify_del_gallery', 'ag_input_nonce') ?>
+                        <input type="hidden" name="name" class="gallery-name">
                         <button type="submit" class="btn btn-primary delete-btn">Confirm</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </form>
