@@ -1,6 +1,6 @@
 
     <div class="content"><section class="container news-container content-container">
-            <a href="/create-gallery" class="btn btn-primary">Create gallery</a>
+            <a href="<?php echo admin_url() . 'admin.php?page=ag-create-gallery'; ?>" class="btn btn-primary">Create gallery</a>
 
                 <div class="card card-custom">
                     <img class="card-img-top" src="" alt="Card image cap">
