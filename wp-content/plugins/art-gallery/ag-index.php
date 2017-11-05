@@ -123,7 +123,7 @@ function ag_include_scripts($hook) {
         wp_enqueue_style('ag_main');
 
         wp_register_style('ag_fa', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
-        wp_enqueue_script('ag_fa');
+        wp_enqueue_style('ag_fa');
 
         wp_register_script('ag_jquery', 'https://code.jquery.com/jquery-3.0.0.min.js');
         wp_enqueue_script('ag_jquery');
@@ -195,12 +195,18 @@ function ag_add_image() {
 
     $table = IMG_TABLE;
 
+    $gallery_name = $_POST['ag_gallery'];
+    $img_name = $_POST['ag_file'];
+    if ($wpdb->get_row( "SELECT id FROM $table WHERE gallery_name = '$gallery_name' AND img_name = '$img_name'" )) {
+        wp_redirect(admin_url('admin.php?page=ag-gallery&name=' . $gallery_name));
+        return;
+    }
 
     $wpdb->insert(
         $table,
         array(
-            'gallery_name' => $_POST['ag_gallery'],
-            'img_name' => $_POST['ag_file']
+            'gallery_name' => $gallery_name,
+            'img_name' => $img_name
         ),
         array(
             '%s',
@@ -229,4 +235,56 @@ function ag_delete_gallery(){
     $wpdb->delete( $table, array( 'gallery_name' => $_POST['name'] ), array( '%s' ) );
     wp_redirect(PLUGIN_BASE_URL);
 
+    $table2 = IMG_TABLE;
+    $wpdb->delete( $table2, array( 'gallery_name' => $_POST['name'] ), array( '%s' ) );
+
+}
+
+add_action('admin_post_ag_delete_image', 'ag_delete_image');
+function ag_delete_image() {
+    global $wpdb;
+    if (!current_user_can('edit_theme_options')) {
+        wp_die("Access denied");
+    }
+
+    check_admin_referer('ag_del_image', 'ag_input_nonce');
+    $table = IMG_TABLE;
+    $wpdb->delete( $table, array( 'img_name' => $_POST['ag_img'], 'gallery_name' => $_POST['ag_gallery'] ), array( '%s', '%s' ) );
+    wp_redirect(PLUGIN_BASE_URL);
+}
+add_action('admin_post_ag_delete_all_images', 'ag_delete_all_images');
+function ag_delete_all_images() {
+    global $wpdb;
+    if (!current_user_can('edit_theme_options')) {
+        wp_die("Access denied");
+    }
+
+    check_admin_referer('ag_del_all_images', 'ag_input_nonce');
+    $table = IMG_TABLE;
+    $wpdb->delete( $table, array( 'gallery_name' => $_POST['ag_gallery']), array( '%s') );
+    wp_redirect(admin_url('admin.php?page=ag-gallery&name=' . $_POST['ag_gallery']));
+}
+
+add_action('admin_post_ag_delete_selected', 'ag_delete_selected');
+function ag_delete_selected() {
+    global $wpdb;
+    if (!current_user_can('edit_theme_options')) {
+        wp_die("Access denied");
+    }
+
+    check_admin_referer('ag_del_selected', 'ag_input_nonce');
+    $table = IMG_TABLE;
+    $names =  explode( ',', $_POST['ag_name'] ) ;
+    $str = "";
+    for ($i = 0;$i < count($names); $i++){
+        $str .= "'" . $names[$i] . "'";
+        if ($i != count($names) - 1) {
+            $str .= ',';
+        }
+    }
+
+    $sql = "DELETE FROM $table WHERE img_name IN ($str)";
+
+    $wpdb->query($sql);
+    wp_redirect(admin_url('admin.php?page=ag-gallery&name=' . $_POST['ag_gallery']));
 }

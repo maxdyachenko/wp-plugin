@@ -236,6 +236,7 @@ ul {
 }
 .zoom-popup img{
 	max-width: 100%;
+	height: 50vh;
 }
 .zoom-popup .close-button{
 	position: absolute;

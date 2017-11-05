@@ -73,8 +73,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var imgName, gallery,
         checkbox = document.getElementsByClassName('form-check-input');
-    $('#delete-image-popup', '#delete-image-popup2', '#delete-image-popup3').on('shown.bs.modal', function (e) {
-        var input = this.getElementsByTagName('input')[0],
+    $('#delete-image-popup, #delete-image-popup2, #delete-image-popup3').on('shown.bs.modal', function (e) {
+        var input = this.getElementsByClassName('image-name')[0],
             form = this.getElementsByTagName('form')[0];
         if (e.relatedTarget.classList.contains('delete-selected')){
             var imgsArray = [];
@@ -113,6 +113,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.classList.remove('modal-open');
         zoomPopup.classList.remove('open');
     });
-    
+
 });
 
