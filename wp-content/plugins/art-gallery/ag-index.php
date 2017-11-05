@@ -5,6 +5,12 @@ Description:  Plugin to create your own images galleries and paste it to the pag
 Author:       Max Dyachenko
 */
 
+
+if (!function_exists('add_action')) {
+    echo "Not allowed!";
+    wp_die();
+}
+
 //config
 define( 'PLUGIN_DIR', plugin_dir_path( __FILE__ ));
 define( 'PLUGIN_BASE_URL', admin_url('admin.php?page=ag-page'));
@@ -86,7 +92,12 @@ function ag_create_gallery() {
     include(PLUGIN_DIR . 'views/create-gallery.php');
 }
 function ag_gallery() {
-    //
+    $gallery_name = sanitize_text_field($_GET['name']);
+    global $wpdb;
+    $table = IMG_TABLE;
+    $gallerylist_data = $wpdb->get_results( "SELECT img_name FROM $table" );
+    include(PLUGIN_DIR . 'views/gallery.php');
+
 }
 //this function should be global
 function checkGalleryLimit() {
@@ -104,7 +115,7 @@ function ag_include_styles() {
     add_action('admin_enqueue_scripts','ag_include_scripts');
 }
 function ag_include_scripts($hook) {
-    if($hook === 'toplevel_page_ag-page' || $hook === 'gallery-list_page_ag-create-gallery') {
+    if($hook === 'toplevel_page_ag-page' || $hook === 'gallery-list_page_ag-create-gallery' || $hook === 'gallery-list_page_ag-gallery') {
         wp_register_style( 'ag_bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css');
         wp_enqueue_style('ag_bootstrap');
 
@@ -132,6 +143,10 @@ function ag_include_scripts($hook) {
     if ($hook === 'gallery-list_page_ag-create-gallery') {
         wp_register_script( 'ag_create_gallery',  plugins_url('/assets/scripts/gallery-page-create.js',__FILE__ ));
         wp_enqueue_script('ag_create_gallery');
+    }
+    if ($hook === 'gallery-list_page_ag-gallery') {
+        wp_register_script( 'ag_gallery',  plugins_url('/assets/scripts/gallery-page.js',__FILE__ ));
+        wp_enqueue_script('ag_gallery');
     }
 }
 
