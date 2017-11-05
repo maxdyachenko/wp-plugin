@@ -95,7 +95,7 @@ function ag_gallery() {
     $gallery_name = sanitize_text_field($_GET['name']);
     global $wpdb;
     $table = IMG_TABLE;
-    $gallery_data = $wpdb->get_results( "SELECT img_name FROM $table" );
+    $gallery_data = $wpdb->get_results( "SELECT img_name FROM $table WHERE gallery_name = '$gallery_name'" );
     include(PLUGIN_DIR . 'views/gallery.php');
 
 }
@@ -121,6 +121,9 @@ function ag_include_scripts($hook) {
 
         wp_register_style( 'ag_main',  plugins_url('/assets/styles/main.css',__FILE__ ));
         wp_enqueue_style('ag_main');
+
+        wp_register_style('ag_fa', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+        wp_enqueue_script('ag_fa');
 
         wp_register_script('ag_jquery', 'https://code.jquery.com/jquery-3.0.0.min.js');
         wp_enqueue_script('ag_jquery');
@@ -161,8 +164,9 @@ function ag_save_gallery() {
 
     //TODO sanitize data here  sanitize_text_field, absint
     $table = GALLERY_LIST_TABLE;
+    $gallery_name = str_replace(" ", "_", $_POST['ag_name']);
 
-    if (checkGalleryLimit() || galleryExist($_POST['ag_name'])) {
+    if (checkGalleryLimit() || galleryExist($gallery_name)) {
         wp_redirect(PLUGIN_BASE_URL);
         return;
     }
@@ -170,7 +174,7 @@ function ag_save_gallery() {
     $wpdb->insert(
         $table,
         array(
-            'gallery_name' => $_POST['ag_name'],
+            'gallery_name' => $gallery_name,
             'gallery_img' => $_POST['ag_file']
         ),
         array(
@@ -180,10 +184,36 @@ function ag_save_gallery() {
     );
     wp_redirect(PLUGIN_BASE_URL);
 }
+add_action('admin_post_ag_add_image', 'ag_add_image');
+function ag_add_image() {
+    global $wpdb;
+    if (!current_user_can('edit_theme_options')) {
+        wp_die("Access denied");
+    }
+
+    check_admin_referer('ag_add_image_action', 'ag_input_nonce');
+
+    $table = IMG_TABLE;
+
+
+    $wpdb->insert(
+        $table,
+        array(
+            'gallery_name' => $_POST['ag_gallery'],
+            'img_name' => $_POST['ag_file']
+        ),
+        array(
+            '%s',
+            '%s'
+        )
+    );
+    wp_redirect(PLUGIN_BASE_URL);
+}
+
 function galleryExist($name) {
     global $wpdb;
     $table = GALLERY_LIST_TABLE;
-    return $wpdb->get_row( "SELECT id FROM $table WHERE gallery_name = $name" );
+    return $wpdb->get_row( "SELECT id FROM $table WHERE gallery_name = '$name'" );
 }
 
 add_action('admin_post_ag_delete_gallery', 'ag_delete_gallery');

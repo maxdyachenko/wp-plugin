@@ -1,11 +1,20 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     var uploadForm = document.getElementById('uploadForm'),
-        fileInput = document.getElementById('file'),
+        fileInput = document.getElementById('ag-file'),
         error = document.getElementsByClassName('invalid-feedback')[0],
         label	 = fileInput.nextElementSibling,
         labelVal = label.innerHTML,
         fileName;
+
+
+    var frame = wp.media({
+        title: 'Upload image',
+        button: {
+            text: 'Use this media'
+        },
+        multiple:false
+    });
 
     uploadForm.addEventListener('submit', function() {
         if (!fileName) {
@@ -13,23 +22,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    fileInput.addEventListener('change', function(e){
-        fileName = e.target.value.split('\\').pop();
+    fileInput.addEventListener('click', function(e){
+        e.preventDefault();
+        frame.open();
+    });
+    frame.on('select', function () {
+        var attachment = frame.state().get('selection').first().toJSON();
+        fileInput.value = attachment.url;
+        fileName = fileInput.value.split('\\').pop();
         if(checkFile()) {
             label.querySelector('p').innerHTML = fileName;
         }
         else{
             fileName = null;
+            label.querySelector('p').innerHTML = '';
         }
     });
 
-    function getFileSize() {
-        if (typeof (fileInput.files) !== "undefined") {
-            return parseFloat(fileInput.files[0].size / 1024).toFixed(2);
-        } else {
-            return false;
-        }
-    }
+    // function getFileSize() {
+    //     if (typeof (fileInput.files) !== "undefined") {
+    //         return parseFloat(fileInput.files[0].size / 1024).toFixed(2);
+    //     } else {
+    //         return false;
+    //     }
+    // }
 
     function checkFileExtension(){
         return fileName.match(/^.*\.(jpg|JPG|png|PNG)$/);
@@ -37,12 +53,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     function checkFile() {
-        if (getFileSize() > 2000){
-            error.classList.add('visible');
-            error.innerHTML = "Image size should be less than 2Mb";
-            return false;
-        }
-        else if (!checkFileExtension()){
+        // if (getFileSize() > 2000){
+        //     error.classList.add('visible');
+        //     error.innerHTML = "Image size should be less than 2Mb";
+        //     return false;
+        // }
+        if (!checkFileExtension()){
             error.classList.add('visible');
             error.innerHTML = "Upload only PNG or JPG";
             return false;
@@ -55,16 +71,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
-    $('#delete-image-popup').on('shown.bs.modal', function (e) {
-        var imgName, gallery,
-            checkbox = document.getElementsByClassName('form-check-input'),
-            input = this.getElementsByTagName('input')[0],
+    var imgName, gallery,
+        checkbox = document.getElementsByClassName('form-check-input');
+    $('#delete-image-popup', '#delete-image-popup2', '#delete-image-popup3').on('shown.bs.modal', function (e) {
+        var input = this.getElementsByTagName('input')[0],
             form = this.getElementsByTagName('form')[0];
-        if (e.relatedTarget.classList.contains('delete-all')) {
-            gallery = e.relatedTarget.getAttribute('data-name');
-            form.setAttribute('action', '/remove-all-images/' + gallery);
-        }
-        else if (e.relatedTarget.classList.contains('delete-selected')){
+        if (e.relatedTarget.classList.contains('delete-selected')){
             var imgsArray = [];
             for (var i = 0; i < checkbox.length; i++){
                 if (checkbox[i].checked){
@@ -72,12 +84,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
             input.setAttribute('value',imgsArray);
-            form.setAttribute('action', '/remove-selected-images');
         }
-        else {
+        else if (e.relatedTarget.classList.contains('delete-one-image')){
             imgName = e.relatedTarget.getAttribute('data-name');
             input.setAttribute('value',imgName);
-            form.setAttribute('action', '/delete');
         }
     });
 
@@ -103,10 +113,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.classList.remove('modal-open');
         zoomPopup.classList.remove('open');
     });
-
-
-
-
-
+    
 });
 
