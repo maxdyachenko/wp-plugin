@@ -10,22 +10,23 @@
 
         </div>
         <div class="row justify-content-between images-wrapper">
-<!--            content here-->
             <?php include(PLUGIN_DIR . 'views/add-image-block.php'); ?>
-            <div class="image-container col-12 col-md-4">
-                <div class="image">
-                    <img src="" alt="Your image" class="rounded">
-                </div>
-                <div class="custom-popover">
-                    <button type="button" class="btn btn-primary zoom-button" data-src="">Zoom</button>
-                    <div class="form-check form-check-inline">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox" name="chk[]" value="">
-                        </label>
+            <?php foreach ($gallery_data as $item): ?>
+                <div class="image-container col-12 col-md-4">
+                    <div class="image">
+                        <img src="<?php echo $item->img_name; ?>" alt="Your image" class="rounded">
                     </div>
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete-image-popup" data-name=">">Delete image</button>
+                    <div class="custom-popover">
+                        <button type="button" class="btn btn-primary zoom-button" data-src="<?php echo $item->img_name; ?>">Zoom</button>
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" name="chk[]" value="<?php echo $gallery_name ?>">
+                            </label>
+                        </div>
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete-image-popup" data-name="<?php echo $gallery_name ?>">Delete image</button>
+                    </div>
                 </div>
-            </div>
+            <?php endforeach; ?>
         </div>
 
         <!--to do pagination here -->

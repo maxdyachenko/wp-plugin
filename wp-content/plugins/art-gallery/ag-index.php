@@ -95,7 +95,7 @@ function ag_gallery() {
     $gallery_name = sanitize_text_field($_GET['name']);
     global $wpdb;
     $table = IMG_TABLE;
-    $gallerylist_data = $wpdb->get_results( "SELECT img_name FROM $table" );
+    $gallery_data = $wpdb->get_results( "SELECT img_name FROM $table" );
     include(PLUGIN_DIR . 'views/gallery.php');
 
 }
