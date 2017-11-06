@@ -12,15 +12,11 @@
  * @author     Your Name <email@example.com>
  *
  */
-include_once PLUGIN_DIR . 'admin/model/class-model-admin.php';
+include_once PLUGIN_DIR . 'admin/model/class-ag-model-admin.php';
+include_once PLUGIN_DIR . 'admin/components/pagination.php';
 class Ag_Admin {
-
-
-
 	public function __construct() {
         $this->model = new Ag_Admin_Model();
-//		$this->plugin_name = $plugin_name;
-//		$this->version = $version;
 
 	}
 
@@ -112,7 +108,21 @@ class Ag_Admin {
     }
     public function galleryPage() {
         $gallery_name = sanitize_text_field($_GET['name']);
-        $gallery_data = $this->model->getGalleryData();
+
+
+        if (isset($_GET['page_active'])) {
+            $page = $_GET['page_active'];
+        }
+        else {
+            $page = 1;
+        }
+
+        $gallery_data = $this->model->getGalleryData($page);
+        $count = $this->model->countOfItems($gallery_name);
+
+        $pagination = new Pagination($count, $page, ITEMS_ON_PAGE, $gallery_name, 'page_active=');
+
+
         include(PLUGIN_DIR . 'admin/view/gallery.php');
     }
 

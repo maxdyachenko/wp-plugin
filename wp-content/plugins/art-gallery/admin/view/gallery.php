@@ -29,7 +29,7 @@
             <?php endforeach; ?>
         </div>
 
-        <!--to do pagination here -->
+        <?php $pagination->get(); ?>
     </section>
 </div>
 

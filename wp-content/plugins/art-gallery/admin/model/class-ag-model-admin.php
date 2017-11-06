@@ -57,10 +57,20 @@ class Ag_Admin_Model {
         $this->wpdb->delete( $table2, array( 'gallery_name' => $name ), array( '%s' ) );
     }
 
-    public function getGalleryData() {
+    public function getGalleryData($page) {
+
+        $count = ITEMS_ON_PAGE;
+
+        $ofset = ($page - 1) * $count;
         $gallery_name = sanitize_text_field($_GET['name']);
         $table = IMG_TABLE;
-        return $this->wpdb->get_results( "SELECT img_name, gallery_name FROM $table WHERE gallery_name = '$gallery_name'" );
+        return $this->wpdb->get_results( "SELECT img_name, gallery_name FROM $table WHERE gallery_name = '$gallery_name' ORDER BY id DESC LIMIT $count OFFSET $ofset" );
+    }
+
+    public function countOfItems($name) {
+        $table = IMG_TABLE;
+        return $this->wpdb->get_var( "SELECT COUNT(*) FROM $table WHERE gallery_name = '$name'" );
+
     }
 
     public function addImage() {
