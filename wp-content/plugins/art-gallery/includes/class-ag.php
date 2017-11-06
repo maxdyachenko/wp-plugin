@@ -81,6 +81,8 @@ class AG {
 
 		$plugin_admin = new Ag_Admin();
 
+        $this->loader->add_action('init', $plugin_admin, 'registerSession');
+
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueueStyles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueueScripts' );
 

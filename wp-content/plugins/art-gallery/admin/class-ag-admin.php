@@ -20,6 +20,11 @@ class Ag_Admin {
 
 	}
 
+	public function registerSession() {
+        if( !session_id() )
+            session_start();
+    }
+
 
 	public function enqueueStyles($hook) {
         if($hook === 'toplevel_page_ag-page' || $hook === 'gallery-list_page_ag-create-gallery' || $hook === 'gallery-list_page_ag-gallery') {

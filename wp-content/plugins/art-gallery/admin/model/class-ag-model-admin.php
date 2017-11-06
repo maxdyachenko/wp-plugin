@@ -80,7 +80,7 @@ class Ag_Admin_Model {
         $img_name = sanitize_text_field($_POST['ag_file']);
         if ($this->wpdb->get_row( "SELECT id FROM $table WHERE gallery_name = '$gallery_name' AND img_name = '$img_name'" )) {
             wp_redirect(admin_url('admin.php?page=ag-gallery&name=' . $gallery_name));
-            return;
+            return false;
         }
 
         $this->wpdb->insert(
