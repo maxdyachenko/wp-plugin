@@ -111,7 +111,9 @@ class Ag_Admin {
         include(PLUGIN_DIR . 'admin/view/create-gallery.php');
     }
     public function galleryPage() {
-
+        $gallery_name = sanitize_text_field($_GET['name']);
+        $gallery_data = $this->model->getGalleryData();
+        include(PLUGIN_DIR . 'admin/view/gallery.php');
     }
 
     public function deleteGallery() {
@@ -120,6 +122,12 @@ class Ag_Admin {
 	    $this->model->deleteGallery();
 
         wp_redirect(PLUGIN_BASE_URL);
+    }
+
+    public function addImage() {
+	    $this->checkSecurity('ag_add_image_action', 'ag_input_nonce');
+
+	    $this->model->addIMage();
     }
 
     public function checkSecurity($action, $input){

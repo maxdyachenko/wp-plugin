@@ -57,5 +57,35 @@ class Ag_Admin_Model {
         $this->wpdb->delete( $table2, array( 'gallery_name' => $name ), array( '%s' ) );
     }
 
+    public function getGalleryData() {
+        $gallery_name = sanitize_text_field($_GET['name']);
+        $table = IMG_TABLE;
+        return $this->wpdb->get_results( "SELECT img_name, gallery_name FROM $table WHERE gallery_name = '$gallery_name'" );
+    }
+
+    public function addImage() {
+        $table = IMG_TABLE;
+
+        $gallery_name = sanitize_text_field($_POST['ag_gallery']);
+        $img_name = sanitize_text_field($_POST['ag_file']);
+        if ($this->wpdb->get_row( "SELECT id FROM $table WHERE gallery_name = '$gallery_name' AND img_name = '$img_name'" )) {
+            wp_redirect(admin_url('admin.php?page=ag-gallery&name=' . $gallery_name));
+            return;
+        }
+
+        $this->wpdb->insert(
+            $table,
+            array(
+                'gallery_name' => $gallery_name,
+                'img_name' => $img_name
+            ),
+            array(
+                '%s',
+                '%s'
+            )
+        );
+        wp_redirect(admin_url('admin.php?page=ag-gallery&name=' . $gallery_name));
+    }
+
 
 }

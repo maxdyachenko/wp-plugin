@@ -42,62 +42,6 @@ run_ag();
 
 
 
-
-//function ag_register_my_custom_menu_page(){
-//    add_menu_page(
-//        'Art gallery',
-//        'Gallery list',
-//        'administrator',
-//        'ag-page',
-//        'ag_gallery_list'
-//    );
-//    add_submenu_page(
-//        'ag-page',  //or null to create page that is not tied to anything
-//        'Create Gallery',
-//        'Create Gallery',
-//        'administrator',
-//        'ag-create-gallery',
-//        'ag_create_gallery'
-//	);
-//    add_submenu_page(
-//        'ag-page',  //or null to create page that is not tied to anything
-//        'Gallery',
-//        'Gallery',
-//        'administrator',
-//        'ag-gallery',
-//        'ag_gallery'
-//    );
-//}
-//
-//function my_admin_head() {
-//
-//    remove_submenu_page( 'ag-page', 'ag-gallery' );
-//}
-//add_action( 'admin_head', 'my_admin_head' );
-//add_action( 'admin_menu', 'ag_register_my_custom_menu_page' );
-
-//function ag_gallery_list(){
-//    global $wpdb;
-//    $table = GALLERY_LIST_TABLE;
-//    $gallerylist_data = $wpdb->get_results( "SELECT gallery_name, gallery_img FROM $table" );
-//    include(PLUGIN_DIR . 'views/gallery-list.php');
-//}
-//function ag_create_gallery() {
-//    $limit = checkGalleryLimit();
-//    include(PLUGIN_DIR . 'views/create-gallery.php');
-//}
-//function ag_gallery() {
-//    $gallery_name = sanitize_text_field($_GET['name']);
-//    global $wpdb;
-//    $table = IMG_TABLE;
-//    $gallery_data = $wpdb->get_results( "SELECT img_name FROM $table WHERE gallery_name = '$gallery_name'" );
-//    include(PLUGIN_DIR . 'views/gallery.php');
-//
-//}
-
-
-
-
 //add_action('admin_post_ag_add_image', 'ag_add_image');
 //function ag_add_image() {
 //    global $wpdb;

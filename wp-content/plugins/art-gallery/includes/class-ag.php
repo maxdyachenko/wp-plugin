@@ -90,6 +90,8 @@ class AG {
         $this->loader->add_action('admin_post_ag_save_gallery', $plugin_admin, 'saveGallery');
         $this->loader->add_action('admin_post_ag_delete_gallery', $plugin_admin,  'deleteGallery');
 
+        $this->loader->add_action('admin_post_ag_add_image', $plugin_admin, 'addImage');
+
 	}
 
 	/**
