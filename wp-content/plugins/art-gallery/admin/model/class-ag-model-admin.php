@@ -97,6 +97,12 @@ class Ag_Admin_Model {
         wp_redirect(admin_url('admin.php?page=ag-gallery&name=' . $gallery_name));
     }
 
+    public function getGalleryDataByName($name) {
+        $table = IMG_TABLE;
+        return $this->wpdb->get_results( "SELECT * FROM $table WHERE gallery_name = '$name'" );
+
+    }
+
     public function deleteImage() {
         $table = IMG_TABLE;
         $img = sanitize_text_field($_POST['ag_img']);

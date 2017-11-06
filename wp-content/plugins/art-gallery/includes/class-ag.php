@@ -13,6 +13,8 @@ class AG {
 	 */
 	protected $loader;
 
+    protected $shortcode_loader;
+
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -26,6 +28,7 @@ class AG {
 	public function __construct() {
 		$this->load_dependencies();
 		$this->define_admin_hooks();
+        $this->define_shortcode();
 		//$this->define_public_hooks();
 
 	}
@@ -60,6 +63,8 @@ class AG {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-ag-admin.php';
 
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-ag-shortcode.php';
+
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
@@ -67,6 +72,8 @@ class AG {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-ag-public.php';
 
 		$this->loader = new Ag_Loader();
+
+		$this->shortcode_loader = new Ag_Shortcode();
 
 	}
 
@@ -97,6 +104,7 @@ class AG {
         $this->loader->add_action('admin_post_ag_delete_all_images', $plugin_admin,'deleteAllImages');
         $this->loader->add_action('admin_post_ag_delete_selected', $plugin_admin,'deleteSelected');
 
+
 	}
 
 	/**
@@ -114,6 +122,10 @@ class AG {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
 	}
+
+	private function define_shortcode() {
+        add_shortcode( 'art_gallery', array($this->shortcode_loader, 'addShortcode') );
+    }
 
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
