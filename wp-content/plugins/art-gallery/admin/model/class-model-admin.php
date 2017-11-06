@@ -102,4 +102,23 @@ class Ag_Admin_Model {
         wp_redirect(admin_url('admin.php?page=ag-gallery&name=' . $gallery));
     }
 
+    public function deleteSelected() {
+        $table = IMG_TABLE;
+        $name = sanitize_text_field($_POST['ag_name']);
+        $names =  explode( ',', $name ) ;
+        $gallery = sanitize_text_field($_POST['ag_gallery']);
+        $str = "";
+        for ($i = 0;$i < count($names); $i++){
+            $str .= "'" . $names[$i] . "'";
+            if ($i != count($names) - 1) {
+                $str .= ',';
+            }
+        }
+
+        $sql = "DELETE FROM $table WHERE img_name IN ($str)";
+
+        $this->wpdb->query($sql);
+        wp_redirect(admin_url('admin.php?page=ag-gallery&name=' . $gallery));
+    }
+
 }

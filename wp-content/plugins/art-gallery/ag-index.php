@@ -37,28 +37,3 @@ function run_ag() {
 
 }
 run_ag();
-
-
-//add_action('admin_post_ag_delete_selected', 'ag_delete_selected');
-//function ag_delete_selected() {
-//    global $wpdb;
-//    if (!current_user_can('edit_theme_options')) {
-//        wp_die("Access denied");
-//    }
-//
-//    check_admin_referer('ag_del_selected', 'ag_input_nonce');
-//    $table = IMG_TABLE;
-//    $names =  explode( ',', $_POST['ag_name'] ) ;
-//    $str = "";
-//    for ($i = 0;$i < count($names); $i++){
-//        $str .= "'" . $names[$i] . "'";
-//        if ($i != count($names) - 1) {
-//            $str .= ',';
-//        }
-//    }
-//
-//    $sql = "DELETE FROM $table WHERE img_name IN ($str)";
-//
-//    $wpdb->query($sql);
-//    wp_redirect(admin_url('admin.php?page=ag-gallery&name=' . $_POST['ag_gallery']));
-//}

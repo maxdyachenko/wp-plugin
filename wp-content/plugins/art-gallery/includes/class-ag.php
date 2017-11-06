@@ -92,8 +92,8 @@ class AG {
 
         $this->loader->add_action('admin_post_ag_add_image', $plugin_admin, 'addImage');
         $this->loader->add_action('admin_post_ag_delete_image', $plugin_admin, 'deleteImage');
-
         $this->loader->add_action('admin_post_ag_delete_all_images', $plugin_admin,'deleteAllImages');
+        $this->loader->add_action('admin_post_ag_delete_selected', $plugin_admin,'deleteSelected');
 
 	}
 
