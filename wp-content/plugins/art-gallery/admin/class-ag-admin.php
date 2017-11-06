@@ -130,6 +130,12 @@ class Ag_Admin {
 	    $this->model->addIMage();
     }
 
+    public function deleteImage() {
+	    $this->checkSecurity('ag_del_image', 'ag_input_nonce');
+
+	    $this->model->deleteImage();
+    }
+
     public function checkSecurity($action, $input){
         if (!current_user_can('edit_theme_options')) {
             wp_die("Access denied");

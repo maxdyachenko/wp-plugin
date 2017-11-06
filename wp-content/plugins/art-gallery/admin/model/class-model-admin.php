@@ -87,5 +87,12 @@ class Ag_Admin_Model {
         wp_redirect(admin_url('admin.php?page=ag-gallery&name=' . $gallery_name));
     }
 
+    public function deleteImage() {
+        $table = IMG_TABLE;
+        $img = sanitize_text_field($_POST['ag_img']);
+        $gallery = sanitize_text_field($_POST['ag_gallery']);
+        $this->wpdb->delete( $table, array( 'img_name' => $img, 'gallery_name' => $gallery ), array( '%s', '%s' ) );
+        wp_redirect(admin_url('admin.php?page=ag-gallery&name=' . $gallery));
+    }
 
 }

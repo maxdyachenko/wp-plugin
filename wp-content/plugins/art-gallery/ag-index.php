@@ -40,41 +40,6 @@ run_ag();
 
 
 
-
-
-//add_action('admin_post_ag_add_image', 'ag_add_image');
-//function ag_add_image() {
-//    global $wpdb;
-//    if (!current_user_can('edit_theme_options')) {
-//        wp_die("Access denied");
-//    }
-//
-//    check_admin_referer('ag_add_image_action', 'ag_input_nonce');
-//
-//    $table = IMG_TABLE;
-//
-//    $gallery_name = $_POST['ag_gallery'];
-//    $img_name = $_POST['ag_file'];
-//    if ($wpdb->get_row( "SELECT id FROM $table WHERE gallery_name = '$gallery_name' AND img_name = '$img_name'" )) {
-//        wp_redirect(admin_url('admin.php?page=ag-gallery&name=' . $gallery_name));
-//        return;
-//    }
-//
-//    $wpdb->insert(
-//        $table,
-//        array(
-//            'gallery_name' => $gallery_name,
-//            'img_name' => $img_name
-//        ),
-//        array(
-//            '%s',
-//            '%s'
-//        )
-//    );
-//    wp_redirect(PLUGIN_BASE_URL);
-//}
-//
-
 //
 //add_action('admin_post_ag_delete_image', 'ag_delete_image');
 //function ag_delete_image() {
