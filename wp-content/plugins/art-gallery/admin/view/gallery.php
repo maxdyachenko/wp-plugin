@@ -10,7 +10,7 @@
 
         </div>
         <div class="row justify-content-between images-wrapper">
-            <?php include(PLUGIN_DIR . 'views/add-image-block.php'); ?>
+            <?php include(PLUGIN_DIR . 'admin/view/add-image-block.php'); ?>
             <?php foreach ($gallery_data as $item): ?>
                 <div class="image-container col-12 col-md-4">
                     <div class="image">
