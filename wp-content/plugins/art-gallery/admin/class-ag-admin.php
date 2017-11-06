@@ -136,6 +136,12 @@ class Ag_Admin {
 	    $this->model->deleteImage();
     }
 
+    public function deleteAllImages() {
+	    $this->checkSecurity('ag_del_all_images', 'ag_input_nonce');
+
+	    $this->model->deleteAllImages();
+    }
+
     public function checkSecurity($action, $input){
         if (!current_user_can('edit_theme_options')) {
             wp_die("Access denied");
