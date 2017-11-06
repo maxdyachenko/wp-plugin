@@ -10,14 +10,15 @@
  * @package    Plugin_Name
  * @subpackage Plugin_Name/admin
  * @author     Your Name <email@example.com>
+ *
  */
+include_once PLUGIN_DIR . 'admin/model/class-model-admin.php';
 class Ag_Admin {
 
 
 
-
 	public function __construct() {
-
+        $this->model = new Ag_Admin_Model();
 //		$this->plugin_name = $plugin_name;
 //		$this->version = $version;
 
@@ -73,7 +74,7 @@ class Ag_Admin {
             array($this, 'gallery_list_page')
         );
         add_submenu_page(
-            'ag-page',  //or null to create page that is not tied to anything
+            'ag-page',
             'Create Gallery',
             'Create Gallery',
             'administrator',
@@ -81,7 +82,7 @@ class Ag_Admin {
             array($this,'create_gallery_page')
         );
         add_submenu_page(
-            'ag-page',  //or null to create page that is not tied to anything
+            'ag-page',
             'Gallery',
             'Gallery',
             'administrator',
@@ -95,10 +96,10 @@ class Ag_Admin {
     }
 
     public function gallery_list_page() {
-
+        include(PLUGIN_DIR . 'admin/view/gallery-list.php');
     }
     public function create_gallery_page() {
-	    
+
     }
     public function gallery_page() {
 
