@@ -81,11 +81,14 @@ class AG {
 
 		$plugin_admin = new Ag_Admin();
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueueStyles' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueueScripts' );
 
-		$this->loader->add_action('admin_menu', $plugin_admin, 'register_custom_page');
-		$this->loader->add_action('admin_head', $plugin_admin, 'remove_gallery_page');
+		$this->loader->add_action('admin_menu', $plugin_admin, 'registerCustomPage');
+		$this->loader->add_action('admin_head', $plugin_admin, 'removeGalleryPage');
+
+        $this->loader->add_action('admin_post_ag_save_gallery', $plugin_admin, 'saveGallery');
+        $this->loader->add_action('admin_post_ag_delete_gallery', $plugin_admin,  'deleteGallery');
 
 	}
 

@@ -25,12 +25,11 @@ class Ag_Admin {
 	}
 
 
-	public function enqueue_styles($hook) {
+	public function enqueueStyles($hook) {
         if($hook === 'toplevel_page_ag-page' || $hook === 'gallery-list_page_ag-create-gallery' || $hook === 'gallery-list_page_ag-gallery') {
             wp_register_style( 'ag_bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css');
             wp_enqueue_style('ag_bootstrap');
-
-            wp_register_style( 'ag_main',  plugins_url('/assets/styles/main.css',__FILE__ ));
+            wp_register_style( 'ag_main',  plugins_url('/assets/styles/main.css', PLUGIN_DIR . PLUGIN_AG_DIR_NAME ));
             wp_enqueue_style('ag_main');
 
             wp_register_style('ag_fa', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
@@ -38,7 +37,7 @@ class Ag_Admin {
         }
 	}
 
-	public function enqueue_scripts($hook) {
+	public function enqueueScripts($hook) {
         if($hook === 'toplevel_page_ag-page' || $hook === 'gallery-list_page_ag-create-gallery' || $hook === 'gallery-list_page_ag-gallery') {
             wp_register_script('ag_jquery', 'https://code.jquery.com/jquery-3.0.0.min.js');
             wp_enqueue_script('ag_jquery');
@@ -52,26 +51,26 @@ class Ag_Admin {
             wp_enqueue_media();
         }
         if ($hook === 'toplevel_page_ag-page') {
-            wp_register_script( 'ag_gallery_list',  plugins_url('/assets/scripts/gallery-list.js',__FILE__ ));
+            wp_register_script( 'ag_gallery_list',  plugins_url( '/assets/scripts/gallery-list.js', PLUGIN_DIR . PLUGIN_AG_DIR_NAME));
             wp_enqueue_script('ag_gallery_list');
         }
         if ($hook === 'gallery-list_page_ag-create-gallery') {
-            wp_register_script( 'ag_create_gallery',  plugins_url('/assets/scripts/gallery-page-create.js',__FILE__ ));
+            wp_register_script( 'ag_create_gallery',  plugins_url('/assets/scripts/gallery-page-create.js', PLUGIN_DIR . PLUGIN_AG_DIR_NAME));
             wp_enqueue_script('ag_create_gallery');
         }
         if ($hook === 'gallery-list_page_ag-gallery') {
-            wp_register_script( 'ag_gallery',  plugins_url('/assets/scripts/gallery-page.js',__FILE__ ));
+            wp_register_script( 'ag_gallery',  plugins_url('/assets/scripts/gallery-page.js', PLUGIN_DIR . PLUGIN_AG_DIR_NAME));
             wp_enqueue_script('ag_gallery');
         }
 	}
 
-	public function register_custom_page() {
+	public function registerCustomPage() {
         add_menu_page(
             'Art gallery',
             'Gallery list',
             'administrator',
             'ag-page',
-            array($this, 'gallery_list_page')
+            array($this, 'galleryListPage')
         );
         add_submenu_page(
             'ag-page',
@@ -79,7 +78,7 @@ class Ag_Admin {
             'Create Gallery',
             'administrator',
             'ag-create-gallery',
-            array($this,'create_gallery_page')
+            array($this,'createGalleryPage')
         );
         add_submenu_page(
             'ag-page',
@@ -87,22 +86,47 @@ class Ag_Admin {
             'Gallery',
             'administrator',
             'ag-gallery',
-            array($this, 'gallery_page')
+            array($this, 'galleryPage')
         );
     }
 
-    public function remove_gallery_page() {
+    public function removeGalleryPage() {
         remove_submenu_page( 'ag-page', 'ag-gallery' );
     }
 
-    public function gallery_list_page() {
+    public function saveGallery() {
+	    $this->checkSecurity('ag_verify_gallery', 'ag_input_nonce');
+
+        $this->model->saveGallery();
+
+        wp_redirect(PLUGIN_BASE_URL);
+    }
+
+    public function galleryListPage() {
+	    $gallerylist_data = $this->model->getGallerysList();
         include(PLUGIN_DIR . 'admin/view/gallery-list.php');
     }
-    public function create_gallery_page() {
+    public function createGalleryPage() {
+        $limit = $this->model->checkGalleryLimit();
+        include(PLUGIN_DIR . 'admin/view/create-gallery.php');
+    }
+    public function galleryPage() {
 
     }
-    public function gallery_page() {
 
+    public function deleteGallery() {
+	    $this->checkSecurity('ag_verify_del_gallery', 'ag_input_nonce');
+
+	    $this->model->deleteGallery();
+
+        wp_redirect(PLUGIN_BASE_URL);
+    }
+
+    public function checkSecurity($action, $input){
+        if (!current_user_can('edit_theme_options')) {
+            wp_die("Access denied");
+        }
+        check_admin_referer($action, $input);
     }
 
 }
